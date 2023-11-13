@@ -14,7 +14,7 @@
 
 - printMenu
 - printTotalPrice
-- printGiveaway
+- pritnPresentation
 - printBenefits
 - printTotalBenefits
 - printDiscountPrice
@@ -57,3 +57,9 @@
 ## discount
 
 - 총 금액 10000원 이상부터 할인 적용
+
+## flow
+
+날짜 입력 -> 모델 생성 -> 모델에서 validate 검사 -> 오류나면 입력시점으로 돌아감
+
+메뉴 입력 -> 모델 생성 -> 모델에서 validate 검사 -> 오류나면 입력시점으로 돌아감

@@ -1,3 +1,4 @@
+import { Console } from '@woowacourse/mission-utils';
 export function deepFreeze(obj) {
   if (obj === null || typeof obj !== 'object') {
     return obj;
@@ -19,3 +20,13 @@ export function deepFreeze(obj) {
 
   return obj;
 }
+
+// export function globalErrorHandler(callback) {
+//   try {
+//     const input = callback();
+//     return input;
+//   } catch (error) {
+//     Console.print(error.message);
+//     globalErrorHandler(callback);
+//   }
+// }

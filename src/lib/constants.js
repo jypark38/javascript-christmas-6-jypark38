@@ -1,4 +1,4 @@
-import { deepFreeze } from './utils';
+import { deepFreeze } from './utils.js';
 
 const MENU = {
   appetizer: { 양송이수프: 6000, 타파스: 5500, 시저샐러드: 8000 },
