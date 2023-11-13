@@ -2,14 +2,16 @@ import InputView from './InputView.js';
 import { INPUT_PROMPTS, PROMPTS } from './lib/prompt.js';
 // import { globalErrorHandler } from './lib/utils.js';
 import OutputView from './OutputView.js';
-// import { Console } from '@woowacourse/mission-utils';
 import { ERROR } from './lib/logs.js';
 import { MENU_PRICE, MENU_TYPE, OFF } from './lib/constants.js';
 
 export class Controller {
   constructor() {
+    //View
     this.inputView = InputView;
     this.outputView = OutputView;
+
+    //Model
     this.menu;
     this.benefit;
   }
@@ -34,31 +36,32 @@ export class Controller {
     }
   }
 
-  evaluate() {
+  run() {
     this.outputView.printMenu(this.menu.menuList);
+
     const totalPrice = this.menu.totalPrice; // number
-    this.outputView.printPrice('<할인 전 총주문 금액>', totalPrice);
     const present = this.benefit.getPresent(totalPrice);
-    this.outputView.printPresent(present);
     const benefitArray = this.generateBenefitArray(present);
-    this.outputView.printBenefits(benefitArray);
     const totalbenefit = this.calculateTotalBenefit(benefitArray);
+    const badge = this.benefit.getBadge(totalbenefit);
+
+    this.outputView.printPrice('<할인 전 총주문 금액>', totalPrice);
+    this.outputView.printPresent(present);
+    this.outputView.printBenefits(benefitArray);
     this.outputView.printPrice('<총혜택 금액>', -totalbenefit);
     this.outputView.printPrice(
       '<할인 후 예상 결제 금액>',
       totalPrice - totalbenefit + present.discount,
     );
-    const badge = this.benefit.getBadge(totalbenefit);
     this.outputView.printBadge(badge);
   }
 
   generateBenefitArray(present) {
     const christmas = this.benefit.christmas;
-    const dayOff = this.benefit.getDayOff(this.menu.data);
-    const weekendOff = this.benefit.getWeekendOff(this.menu.data);
+    const weeklyOff = this.benefit.getWeeklyOff(this.menu.data);
     const special = this.benefit.special;
 
-    return [christmas, dayOff, weekendOff, special, present];
+    return [christmas, weeklyOff, special, present];
   }
 
   calculateTotalBenefit(benefitArray) {
@@ -72,7 +75,7 @@ class Menu {
   #menu;
   constructor(menu) {
     this.#validate(menu);
-    this.#menu = menu.split(',').map(item => item.split('-'));
+    this.#menu = menu.split(',');
   }
   #validate(menu) {
     if (!/^([가-힣\s]+-\d+,)*([[가-힣\s]+-\d+)$/.test(menu))
@@ -80,28 +83,24 @@ class Menu {
   }
 
   get data() {
-    return this.#menu;
+    return this.#menu.map(item => item.split('-'));
   }
 
   get menuList() {
-    return this.#menu.map(item => `${item[0]} ${item[1]}개`);
+    return this.#menu
+      .map(item => item.split('-'))
+      .map(item => `${item[0]} ${item[1]}개`);
   }
 
   get totalPrice() {
-    return this.#menu.reduce(
-      (acc, curr) => acc + MENU_PRICE[curr[0]] * curr[1],
-      0,
-    );
+    return this.#menu
+      .map(item => item.split('-'))
+      .reduce((acc, curr) => acc + MENU_PRICE[curr[0]] * curr[1], 0);
   }
 }
 
 class Benefit {
   #date;
-  // this.christmas;
-  // this.weekly;
-  // this.special;
-  // this.presentation;
-  // this.badge;
   constructor(date) {
     this.#validate(date);
     this.#date = Number(date); //number
@@ -120,51 +119,26 @@ class Benefit {
     };
   }
 
-  get christmas() {
-    const returnObj = this.initDiscount('크리스마스 디데이 할인');
-    if (this.#date <= 25)
-      returnObj.discount = OFF.christmas + (this.#date - 1) * 100;
-    return returnObj;
-  }
+  getWeeklyOff(menuData) {
+    const isWeekend = (this.#date - 1) % 7 <= 1;
+    const discountType = isWeekend ? '주말 할인' : '평일 할인';
+    const discountObject = this.initDiscount(discountType);
 
-  calculateDiscount(menuData, discountType) {
-    const returnObj = this.initDiscount(discountType);
     const filterFunction = item => {
-      const type = (this.#date - 1) % 7 <= 1 ? 'main' : 'dessert';
-
-      if (type === 'main' && discountType === '평일 할인') return;
-      if (type === 'dessert' && discountType === '주말 할인') return;
-      return MENU_TYPE[type].includes(item[0]);
+      return MENU_TYPE[isWeekend ? 'main' : 'dessert'].includes(item[0]);
     };
-
     const offList = menuData.filter(filterFunction).map(item => item[1]); //.map(item => item[1]);
-
-    returnObj.discount = offList.reduce(
+    discountObject.discount = offList.reduce(
       (acc, curr) => acc + curr * OFF.weekly,
       0,
     );
-
-    return returnObj;
-  }
-
-  getDayOff(menuData) {
-    return this.calculateDiscount(menuData, '평일 할인');
-  }
-
-  getWeekendOff(menuData) {
-    return this.calculateDiscount(menuData, '주말 할인');
-  }
-
-  get special() {
-    const returnObj = this.initDiscount('특별 할인');
-    if ([3, 10, 17, 24, 25, 31].includes(this.#date)) returnObj.discount = 1000;
-    return returnObj;
+    return discountObject;
   }
 
   getPresent(totalPrice) {
-    const returnObj = this.initDiscount('증정 이벤트');
-    if (totalPrice >= 120000) returnObj.discount = 25000;
-    return returnObj;
+    const discountObject = this.initDiscount('증정 이벤트');
+    if (totalPrice >= 120000) discountObject.discount = 25000;
+    return discountObject;
   }
 
   getBadge(totalDiscount) {
@@ -178,5 +152,19 @@ class Benefit {
       default:
         return '없음';
     }
+  }
+
+  get christmas() {
+    const discountObject = this.initDiscount('크리스마스 디데이 할인');
+    if (this.#date <= 25)
+      discountObject.discount = OFF.christmas + (this.#date - 1) * 100;
+    return discountObject;
+  }
+
+  get special() {
+    const discountObject = this.initDiscount('특별 할인');
+    if ([3, 10, 17, 24, 25, 31].includes(this.#date))
+      discountObject.discount = 1000;
+    return discountObject;
   }
 }

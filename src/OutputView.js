@@ -27,13 +27,12 @@ const OutputView = {
     Console.print('<혜택 내역>');
     const filterdBenefit = benefit.filter(item => item.discount);
     if (!filterdBenefit.length) return Console.print('없음');
-    filterdBenefit.forEach(item => this.printBenefit(item));
+    filterdBenefit.forEach(benefit => this.printBenefit(benefit));
     Console.print('');
   },
 
   printBenefit(benefit) {
-    const message = `${benefit.topic}: -${benefit.discount.toLocaleString()}원`;
-    Console.print(message);
+    Console.print(`${benefit.topic}: -${benefit.discount.toLocaleString()}원`);
   },
 
   printBadge(badge) {
