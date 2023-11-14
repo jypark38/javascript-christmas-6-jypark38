@@ -1,4 +1,4 @@
-import { ERROR } from '../lib/logs.js';
+import { ERROR } from '../lib/error.js';
 
 class DateValidator {
   static dateFormat(date) {

@@ -1,5 +1,5 @@
 import { MENU_PRICE, MENU_TYPE } from '../lib/constants.js';
-import { ERROR } from '../lib/logs.js';
+import { ERROR } from '../lib/error.js';
 
 class OrderValidator {
   constructor(order) {
@@ -33,7 +33,6 @@ class OrderValidator {
   orderNumber() {
     const userOrderNum = this.userOrderNum;
     const totalNum = userOrderNum.reduce((acc, curr) => acc + Number(curr), 0);
-    console.log('!!!!!', totalNum);
     if (totalNum > 20) throw new Error(ERROR.invalidTotalRange);
   }
 }

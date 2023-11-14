@@ -1,4 +1,5 @@
 import { Console } from '@woowacourse/mission-utils';
+import { HEADER } from './lib/prompt.js';
 
 const OutputView = {
   printMessage(message) {
@@ -6,7 +7,7 @@ const OutputView = {
   },
 
   printMenu(menuList) {
-    Console.print('<주문 메뉴>');
+    Console.print(HEADER.order);
     menuList.forEach(item => Console.print(item));
     Console.print('');
   },

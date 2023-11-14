@@ -1,4 +1,5 @@
-import { MENU_TYPE, OFF } from '../lib/constants.js';
+import { BADGE, MENU_TYPE, OFF } from '../lib/constants.js';
+import { BENEFIT_LIST } from '../lib/prompt.js';
 import DateValidator from '../validator/DateValidator.js';
 
 class Benefit {
@@ -22,7 +23,7 @@ class Benefit {
 
   getWeeklyOff(menuData) {
     const isWeekend = (this.#date - 1) % 7 <= 1;
-    const discountType = isWeekend ? '주말 할인' : '평일 할인';
+    const discountType = isWeekend ? BENEFIT_LIST.weekend : BENEFIT_LIST.day;
     const discountObject = this.initDiscount(discountType);
 
     const filterFunction = item => {
@@ -37,7 +38,7 @@ class Benefit {
   }
 
   getPresent(totalPrice) {
-    const discountObject = this.initDiscount('증정 이벤트');
+    const discountObject = this.initDiscount(BENEFIT_LIST.present);
     if (totalPrice >= 120000) discountObject.discount = 25000;
     return discountObject;
   }
@@ -45,25 +46,25 @@ class Benefit {
   getBadge(totalDiscount) {
     switch (true) {
       case totalDiscount >= 20000:
-        return '산타';
+        return BADGE.santa;
       case totalDiscount >= 10000:
-        return '트리';
+        return BADGE.tree;
       case totalDiscount >= 5000:
-        return '별';
+        return BADGE.star;
       default:
         return '없음';
     }
   }
 
   get christmas() {
-    const discountObject = this.initDiscount('크리스마스 디데이 할인');
+    const discountObject = this.initDiscount(BENEFIT_LIST.christmas);
     if (this.#date <= 25)
       discountObject.discount = OFF.christmas + (this.#date - 1) * 100;
     return discountObject;
   }
 
   get special() {
-    const discountObject = this.initDiscount('특별 할인');
+    const discountObject = this.initDiscount(BENEFIT_LIST.special);
     if ([3, 10, 17, 24, 25, 31].includes(this.#date))
       discountObject.discount = 1000;
     return discountObject;

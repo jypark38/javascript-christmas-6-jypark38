@@ -21,9 +21,15 @@ export const MENU_TYPE = Object.keys(MENU).reduce((acc, category) => {
   return acc;
 }, {});
 
-export const OFF = {
+export const OFF = Object.freeze({
   // 2일부터 25일까지 100원씩 누적됨
   christmas: 1000,
   weekly: 2023,
   special: 1000,
-};
+});
+
+export const BADGE = Object.freeze({
+  santa: '산타',
+  tree: '트리',
+  star: '별',
+});

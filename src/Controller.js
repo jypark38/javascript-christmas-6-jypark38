@@ -1,5 +1,5 @@
 import InputView from './InputView.js';
-import { INPUT_PROMPTS, PROMPTS } from './lib/prompt.js';
+import { HEADER, INPUT_PROMPTS, PROMPTS } from './lib/prompt.js';
 // import { globalErrorHandler } from './lib/utils.js';
 import OutputView from './OutputView.js';
 import Menu from './model/Menu.js';
@@ -56,18 +56,18 @@ export class Controller {
   }
 
   printResult({ totalPrice, present, benefitArray, totalbenefit, badge }) {
-    this.outputView.printPrice('<할인 전 총주문 금액>', totalPrice);
-    this.outputView.printPresent('<증정 메뉴>', present);
-    this.outputView.printBenefits('<혜택 내역>', benefitArray);
+    this.outputView.printPrice(HEADER.preOff, totalPrice);
+    this.outputView.printPresent(HEADER.present, present);
+    this.outputView.printBenefits(HEADER.benefit, benefitArray);
     this.outputView.printPrice(
-      '<총혜택 금액>',
+      HEADER.totalBenefit,
       !totalbenefit ? 0 : -totalbenefit,
     );
     this.outputView.printPrice(
-      '<할인 후 예상 결제 금액>',
+      HEADER.postOff,
       totalPrice - totalbenefit + present.discount,
     );
-    this.outputView.printBadge('<12월 이벤트 배지>', badge);
+    this.outputView.printBadge(HEADER.badge, badge);
   }
 
   generateBenefitArray(present) {
