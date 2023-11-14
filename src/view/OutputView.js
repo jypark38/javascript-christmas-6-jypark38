@@ -1,5 +1,5 @@
 import { Console } from '@woowacourse/mission-utils';
-import { HEADER } from '../lib/prompt';
+import { HEADER } from '../lib/prompt.js';
 
 const OutputView = {
   printMessage(message) {

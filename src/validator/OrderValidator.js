@@ -25,7 +25,7 @@ class OrderValidator {
 
   onlyBeverage() {
     const userOrder = this.userOrder;
-    const beverageList = Object.keys(MENU_TYPE['beverage']);
+    const beverageList = MENU_TYPE['beverage'];
     if (userOrder.every(item => beverageList.includes(item)))
       throw new Error(ERROR.invalidOrder);
   }
