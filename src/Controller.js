@@ -1,7 +1,7 @@
-import InputView from './InputView.js';
+import InputView from './view/InputView.js';
 import { HEADER, INPUT_PROMPTS, PROMPTS } from './lib/prompt.js';
 // import { globalErrorHandler } from './lib/utils.js';
-import OutputView from './OutputView.js';
+import OutputView from './view/OutputView.js';
 import Menu from './model/Menu.js';
 import Benefit from './model/Benefit.js';
 
