@@ -17,26 +17,26 @@ const OutputView = {
     Console.print(`${price.toLocaleString()}원\n`);
   },
 
-  printPresent(present) {
+  printPresent(prompt, present) {
     const message = present.discount ? '샴페인 1개' : '없음';
-    Console.print('<증정 메뉴>');
+    Console.print(prompt);
     Console.print(`${message}\n`);
   },
 
-  printBenefits(benefit) {
-    Console.print('<혜택 내역>');
-    const filterdBenefit = benefit.filter(item => item.discount);
-    if (!filterdBenefit.length) return Console.print('없음');
-    filterdBenefit.forEach(benefit => this.printBenefit(benefit));
+  printBenefits(prompt, benefit) {
+    Console.print(prompt);
+    if (!benefit.length) return Console.print(`없음\n`);
+
+    benefit.forEach(item => this.printBenefit(item));
     Console.print('');
   },
 
   printBenefit(benefit) {
-    Console.print(`${benefit.topic}: -${benefit.discount.toLocaleString()}원`);
+    Console.print(`${benefit.topic}: ${benefit.discount.toLocaleString()}원`);
   },
 
-  printBadge(badge) {
-    Console.print('<12월 이벤트 배지>');
+  printBadge(prompt, badge) {
+    Console.print(prompt);
     Console.print(badge);
   },
 
