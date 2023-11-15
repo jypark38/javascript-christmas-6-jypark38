@@ -50,6 +50,16 @@ describe('Benefit', () => {
       expect(result.topic).toBe('평일 할인');
       expect(result.discount).toBe(2023*3);
     });
+
+    it('주말 할인 테스트 (디저트)', () => {
+      const menuData = [['초코케이크', 2], ['아이스크림', 1]];
+      const benefit = new Benefit(9);
+
+      const result = benefit.getWeeklyOff(menuData);
+
+      expect(result.topic).toBe('주말 할인');
+      expect(result.discount).toBe(0);
+    });
   });
 
   describe('getPresent', () => {
